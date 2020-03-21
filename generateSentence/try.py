@@ -1,10 +1,6 @@
-a=["okan","alan","ohmet","memet","onur","fatih"]
-zipa = zip(*[a[i:] for i in range(2)])
-for x in zipa:
-    print(x)
-print([" ".join(x) for x in zipa])
-
-
+word_list = ['<s>', 'with', 'almost', 'everything', 'else', 'to', 'make', 'them', 'happy', 'they', 'wanted', 'one', 'thing', 'they', 'had', 'no', 'children', '</s>']
+jo =[ " ".join(gram) for gram in zip(*[word_list[i:] for i in range(2)])]
+print(jo)
 
 """         line_number=1
         line_number+=1
