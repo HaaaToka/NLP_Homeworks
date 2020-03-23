@@ -1,6 +1,12 @@
-word_list = ['<s>', 'with', 'almost', 'everything', 'else', 'to', 'make', 'them', 'happy', 'they', 'wanted', 'one', 'thing', 'they', 'had', 'no', 'children', '</s>']
-jo =[ " ".join(gram) for gram in zip(*[word_list[i:] for i in range(2)])]
-print(jo)
+import itertools  
+import operator  
+result = itertools.accumulate([1,2,3,4,5], operator.add)  
+print(list(result))
+
+
+
+
+
 
 """         line_number=1
         line_number+=1

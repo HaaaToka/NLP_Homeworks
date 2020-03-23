@@ -95,21 +95,57 @@ class LanguageModel:
                 print("-> :",nxt)
                 for prev,cnt in prevs[0].items():
                     print("\t ",prev,nxt," -> :",cnt)
-            print("Unique ->",self.unique_n_grams)
+            print("Unique ->",self.unique_n_grams) """
 
-        print("Total ->",self.total_words_count) """
+        print("Total ->",self.total_words_count) 
 
+    
+    def StartSentence(self):
+
+        if self.ngrams == 1:
+            return [ self.Next("give me first word") ]
+
+        else:
+            return (self.ngrams-1) * ["<s>"]
 
     def Generate(self, length, count):
         """
             length : the maximum number of words in a sentence
             count : how many sentences will be generated
+        """ 
+
+        for i in range(count+1):
+            print(str(self.ngrams)+"grams sentence generation")
+            print(str(i+1)+". sentence :")
+
+            generated_sentences = self.StartSentence()
+            while len(generated_sentences)<(length+2*self.ngrams) and generated_sentences[-1]!="</s>":
+                generated_sentences.append(self.Next(" ".join(generated_sentences[-self.ngrams:])))
+
+    def RandomCumulativeSummation(self,giveme_dict):
         """
 
+            CONTINUE FROM HERE
+            THE OUTLINE OF FUNCTION IS IN try.py
+            THEN CONTINUE "NEXT" FUNCTION
+
+        """ 
+
+    def Next(self,wordlist):
+        # return a random word w according to the distribution p(w|"I")
+        # Used the MLE distributions for this
+
+        prev_token = ""
+
+        if self.ngrams == 1:
+            print("unigram")
+
+        else :
+            print(2)
+
+        return "next word"
 
 
-        return 1
-        
     
     def Prob(self,sentence):
         # Returns the MLE of given sentence
@@ -130,7 +166,7 @@ class LanguageModel:
                 next_gram = split_sentence[self.ngrams+index-1]
 
                 result *= ( self.n_grams_dict[prev_gram][0][next_gram] / self.n_grams_dict[prev_gram][1] )
-                print(prev_gram,next_gram,"->",self.n_grams_dict[prev_gram][0][next_gram],":",self.n_grams_dict[prev_gram][1])
+                print(prev_gram,next_gram,"->",self.n_grams_dict[prev_gram][0][next_gram],":",self.n_grams_dict[prev_gram][1], "- - -", self.n_grams_dict[prev_gram][0][next_gram] / self.n_grams_dict[prev_gram][1])
 
         return result
         
@@ -164,8 +200,3 @@ class LanguageModel:
         result = 1
         return result
 
-    def Next(self,word):
-        # return a random word w according to the distribution p(w|"I")
-        # Used the MLE distributions for this
-
-        return "next word"
