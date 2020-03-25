@@ -18,7 +18,7 @@ class LanguageModel:
     n_grams_dict = defaultdict(DefaultdictInside) # this will evolve for storing probability
     unique_n_grams = 0
     """
-        xxx yyy zzz şeklinde olduğunda {"zzz" : [{ "xxx yyy" : 1}, 1]}
+        lets say this our three word respectify"xxx yyy zzz"  {"xxx yyy" : [{ "zzz" : 1}, 1]}
         mesela <s><s> vericem ben cümle üretirken o tek tek baka baka gidecek
     """
 
@@ -34,12 +34,12 @@ class LanguageModel:
         """
             Sentences are not too long. Thus, creating extra list aren't expensive
         """
-        punctuation_signs = ["``","''","?","!","|",",",";",":","'s",".","--"]
+        punctuation_signs = ["``","''","?","!","|",",",";",":","'s",".","--","'re"]
         sanitized_list = []
 
         for elem in word_list:
             if elem in punctuation_signs:
-                if elem in ["'s"] and len(sanitized_list):
+                if elem in ["'s","'re"] and len(sanitized_list):
                     sanitized_list[-1]+=elem
             else:
                 sanitized_list.append(elem.lower())
@@ -91,13 +91,14 @@ class LanguageModel:
             print("Unique ->",self.unique_words_count)
         
         else: # ngrams = 2,3
-            for nxt,prevs in self.n_grams_dict.items():
-                print("-> :",nxt)
-                for prev,cnt in prevs[0].items():
-                    print("\t ",prev,nxt," -> :",cnt)
+            for prev,nxts in self.n_grams_dict.items():
+                print("-> :",prev,"...",nxts[1])
+                for nxt,cnt in nxts[0].items():
+                    print("\t ",prev,",",nxt," -> :",cnt)
             print("Unique ->",self.unique_n_grams) """
 
-        print("Total ->",self.total_words_count) 
+        print("Total ->",self.total_words_count)
+        print("DATASET WAS LOADED TO LanguageModel")
 
     
     def StartSentence(self):
@@ -114,13 +115,22 @@ class LanguageModel:
             count : how many sentences will be generated
         """ 
 
-        for i in range(count+1):
+        print("Generating of Sentence has started".upper())
+        
+        for i in range(count):
             print(str(self.ngrams)+"grams sentence generation")
             print(str(i+1)+". sentence :")
 
-            generated_sentences = self.StartSentence()
+            # generated_sentences = self.StartSentence()
+            generated_sentences = (self.ngrams)*["<s>"]
             while len(generated_sentences)<(length+2*self.ngrams) and generated_sentences[-1]!="</s>":
-                generated_sentences.append(self.Next(" ".join(generated_sentences[-self.ngrams:])))
+                if self.ngrams == 1:
+                    generated_sentences.append(["GiveMeWord"])
+                else:
+                    generated_sentences.append(self.Next(generated_sentences[-(self.ngrams-1):]))
+                #generated_sentences.append(self.Next(" ".join(generated_sentences[-self.ngrams:])))
+            
+            print(" ".join(generated_sentences))
 
     def RandomCumulativeSummation(self,giveme_dict):
         """
@@ -131,17 +141,24 @@ class LanguageModel:
 
         """ 
 
-    def Next(self,wordlist):
+
+    def Next(self,prev_words):
         # return a random word w according to the distribution p(w|"I")
         # Used the MLE distributions for this
 
-        prev_token = ""
+        prev_token = " ".join(prev_words)
 
         if self.ngrams == 1:
             print("unigram")
 
         else :
-            print(2)
+            #print("coming :",prev_words," - - tot : ", self.n_grams_dict[prev_token][1] )
+            loc = randint(1,self.n_grams_dict[prev_token][1])
+            #print("::LOC>> ",loc)
+            for nxt,cnt in self.n_grams_dict[prev_token][0].items():
+                loc -= cnt
+                if loc <= 0:
+                    return nxt
 
         return "next word"
 
