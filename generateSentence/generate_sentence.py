@@ -31,8 +31,8 @@ def dataset(folderPath):
         else:
             sentences.append(line)
 
-        if line_number == 20000:
-            break
+        """ if line_number == 50000:
+            break """
     
     print("DATASET FILE HAS READ")
     return sentences
@@ -50,9 +50,10 @@ def main():
 
     ngram_language_model = LanguageModel(NN_grams)
     ngram_language_model.LoadDataset2Model(sentences)
+    generated_sentences = ngram_language_model.Generate(20,10)
 
-    #print("{0:.20f}".format(ngram_language_model.Prob("With almost everything else to make them happy they wanted one thing they had no children")))
-    ngram_language_model.Generate(20,2)
+    print(ngram_language_model.Prob(generated_sentences[-1]))
+    print(ngram_language_model.PPL(generated_sentences[-1]))
 
 
 

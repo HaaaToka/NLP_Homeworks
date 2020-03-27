@@ -7,24 +7,19 @@ def DefaultdictInside():
 class LanguageModel:
 
     ngrams=0
-    # 1grams model
-    unigram_word_dict=defaultdict(int) # this will evolve for storing probability 
-    unique_words_count = 0
+
+    n_grams_dict = defaultdict(DefaultdictInside) # vocabulary dictionary
+    unique_n_grams = 0
     total_words_count = 0 # for laplace smoothing
 
-    # ngrams model
-    """ n_mines_one_grams_dict = defaultdict(int) # this will evolve for storing probability
-    unique_n_mines_one_grams = 0 """
-    n_grams_dict = defaultdict(DefaultdictInside) # this will evolve for storing probability
-    unique_n_grams = 0
+    all_generated_sentences = []
     """
         lets say this our three word respectify"xxx yyy zzz"  {"xxx yyy" : [{ "zzz" : 1}, 1]}
         mesela <s><s> vericem ben cümle üretirken o tek tek baka baka gidecek
     """
 
-
     def __init__(self,n):
-        print("You create a new "+str(n)+"ngrams language modal")
+        print("You create a new "+str(n)+"gram(s) language modal")
         self.Ngram(n)
 
     def Ngram(self,n):
@@ -34,12 +29,12 @@ class LanguageModel:
         """
             Sentences are not too long. Thus, creating extra list aren't expensive
         """
-        punctuation_signs = ["``","''","?","!","|",",",";",":","'s",".","--","'re"]
+        punctuation_signs = ["``","`","''","'","?","!","|",",",";",":",".","--","'re","'s","n't"]
         sanitized_list = []
 
         for elem in word_list:
             if elem in punctuation_signs:
-                if elem in ["'s","'re"] and len(sanitized_list):
+                if elem in ["'s","'re","n't"] and len(sanitized_list):
                     sanitized_list[-1]+=elem
             else:
                 sanitized_list.append(elem.lower())
@@ -51,9 +46,8 @@ class LanguageModel:
     def CountGrams(self, word_list):
         
         if self.ngrams == 1:
-            temp_counts = Counter(word_list)
-            for k,v in temp_counts.items():
-                self.unigram_word_dict[k]+=v
+            for w in word_list:
+                self.n_grams_dict[w][1]+=1
 
         else :            
             for index in range(len(word_list)-self.ngrams):
@@ -69,45 +63,40 @@ class LanguageModel:
         word_list = sentence.strip().split(" ")[1:]
         word_list = self.PunctuationSanitize(word_list)
 
-        # self.CountGrams(" ".join(gram) for gram in zip(*[word_list[i:] for i in range(self.ngrams)]))
         self.CountGrams(word_list)
-
-        self.unique_words_count = len(self.unigram_word_dict.keys())
-        self.total_words_count = sum(self.unigram_word_dict.values())
-
         self.unique_n_grams = len(self.n_grams_dict.keys())
-        for v in self.n_grams_dict.values():
-            self.total_words_count += v[1]
-
     
     def LoadDataset2Model(self, sentences):
 
         for s in sentences:
             self.Sentence2Countlist(s)
 
-        """ if self.ngrams == 1:
-            for k,v in self.unigram_word_dict.items():
-                print( "->", k, ":", v )
-            print("Unique ->",self.unique_words_count)
-        
-        else: # ngrams = 2,3
-            for prev,nxts in self.n_grams_dict.items():
-                print("-> :",prev,"...",nxts[1])
-                for nxt,cnt in nxts[0].items():
-                    print("\t ",prev,",",nxt," -> :",cnt)
-            print("Unique ->",self.unique_n_grams) """
+        for v in self.n_grams_dict.values():
+            self.total_words_count += v[1]
 
-        print("Total ->",self.total_words_count)
+        print("\tUnique Word Count ->",self.unique_n_grams)
+        print("\tTotal Word Count ->",self.total_words_count)
         print("DATASET WAS LOADED TO LanguageModel")
 
     
     def StartSentence(self):
 
         if self.ngrams == 1:
-            return [ self.Next("give me first word") ]
+            return [ "GiveMeFirstWord" ]
 
         else:
             return (self.ngrams-1) * ["<s>"]
+
+
+    def PrintSentence(self,generated_words):
+
+        if self.ngrams == 1:
+            self.all_generated_sentences.append(" ".join(generated_words[1:]))
+            print(self.all_generated_sentences[-1])
+
+        else:
+            self.all_generated_sentences.append(" ".join(generated_words[self.ngrams-1:]))
+            print(self.all_generated_sentences[-1])
 
     def Generate(self, length, count):
         """
@@ -115,32 +104,20 @@ class LanguageModel:
             count : how many sentences will be generated
         """ 
 
-        print("Generating of Sentence has started".upper())
+        print("GENERATING OF "+str(self.ngrams)+"GRAM(S) SENTENCE HAS STARTED")
         
         for i in range(count):
-            print(str(self.ngrams)+"grams sentence generation")
-            print(str(i+1)+". sentence :")
-
-            # generated_sentences = self.StartSentence()
-            generated_sentences = (self.ngrams)*["<s>"]
-            while len(generated_sentences)<(length+2*self.ngrams) and generated_sentences[-1]!="</s>":
+            print(str(i+1)+". Sentence :", end=" ")
+            generated_sentence = self.StartSentence()
+            while len(generated_sentence)<(length+self.ngrams-1) and generated_sentence[-1]!="</s>":
                 if self.ngrams == 1:
-                    generated_sentences.append(["GiveMeWord"])
+                    generated_sentence.append(self.Next(["GiveMeWord"]))
                 else:
-                    generated_sentences.append(self.Next(generated_sentences[-(self.ngrams-1):]))
-                #generated_sentences.append(self.Next(" ".join(generated_sentences[-self.ngrams:])))
+                    generated_sentence.append(self.Next(generated_sentence[-(self.ngrams-1):]))
             
-            print(" ".join(generated_sentences))
+            self.PrintSentence(generated_sentence)
 
-    def RandomCumulativeSummation(self,giveme_dict):
-        """
-
-            CONTINUE FROM HERE
-            THE OUTLINE OF FUNCTION IS IN try.py
-            THEN CONTINUE "NEXT" FUNCTION
-
-        """ 
-
+        return self.all_generated_sentences
 
     def Next(self,prev_words):
         # return a random word w according to the distribution p(w|"I")
@@ -149,19 +126,20 @@ class LanguageModel:
         prev_token = " ".join(prev_words)
 
         if self.ngrams == 1:
-            print("unigram")
+            # Random Cumulative Summation
+            loc = randint(1,self.total_words_count)
+            for nxt,dctCnt in self.n_grams_dict.items():
+                loc -= dctCnt[1]
+                if loc <= 0:
+                    return nxt
 
         else :
-            #print("coming :",prev_words," - - tot : ", self.n_grams_dict[prev_token][1] )
+            # print("coming :",prev_words," - - tot : ", self.n_grams_dict[prev_token][1] )
             loc = randint(1,self.n_grams_dict[prev_token][1])
-            #print("::LOC>> ",loc)
             for nxt,cnt in self.n_grams_dict[prev_token][0].items():
                 loc -= cnt
                 if loc <= 0:
                     return nxt
-
-        return "next word"
-
 
     
     def Prob(self,sentence):
@@ -174,16 +152,16 @@ class LanguageModel:
 
         if self.ngrams == 1:
             for word in split_sentence:
-                result *= (self.unigram_word_dict[word]/self.total_words_count)
-                print("{0} -> {1} / {2} = {3:.20f}".format(word,self.unigram_word_dict[word],self.total_words_count,(self.unigram_word_dict[word]/self.total_words_count)))
+                # print("{0} -> {1} / {2} = {3:.20f}".format(word,self.n_grams_dict[word][1],self.total_words_count,(self.n_grams_dict[word][1]/self.total_words_count)))
+                result *= (self.n_grams_dict[word][1]/self.total_words_count)
   
         else:
             for index in range(len(split_sentence)-self.ngrams):
                 prev_gram = " ".join(split_sentence[index:self.ngrams+index-1])
                 next_gram = split_sentence[self.ngrams+index-1]
 
+                # print(prev_gram,next_gram,"->",self.n_grams_dict[prev_gram][0][next_gram],":",self.n_grams_dict[prev_gram][1], "- - -", self.n_grams_dict[prev_gram][0][next_gram] / self.n_grams_dict[prev_gram][1])
                 result *= ( self.n_grams_dict[prev_gram][0][next_gram] / self.n_grams_dict[prev_gram][1] )
-                print(prev_gram,next_gram,"->",self.n_grams_dict[prev_gram][0][next_gram],":",self.n_grams_dict[prev_gram][1], "- - -", self.n_grams_dict[prev_gram][0][next_gram] / self.n_grams_dict[prev_gram][1])
 
         return result
         
@@ -198,22 +176,24 @@ class LanguageModel:
 
         if self.ngrams == 1:
             for word in split_sentence:
-                result *= ((self.unigram_word_dict[word] + 1) / (self.unique_words_count + self.unique_words_count))
-                print("{0} -> {1} / {2} = {3:.20f}".format(word,self.unigram_word_dict[word],self.unique_words_count,(self.unigram_word_dict[word]/self.unique_words_count)))
+                # print("{0} -> {1} / {2} = {3:.20f}".format(word,self.n_grams_dict[word][1],self.unique_n_grams,(self.n_grams_dict[word][1]/self.unique_n_grams)))
+                result *= ((self.n_grams_dict[word][1] + 1) / (self.unique_n_grams + self.unique_n_grams))
   
         else:
             for index in range(len(split_sentence)-self.ngrams):
                 prev_gram = " ".join(split_sentence[index:self.ngrams+index-1])
                 next_gram = split_sentence[self.ngrams+index-1]
 
-                print(prev_gram,next_gram,"->",self.n_grams_dict[prev_gram][0][next_gram],":",self.n_grams_dict[prev_gram][1])
+                # print(prev_gram,next_gram,"->",self.n_grams_dict[prev_gram][0][next_gram],":",self.n_grams_dict[prev_gram][1])
                 result *= ( (self.n_grams_dict[prev_gram][0][next_gram] + 1) / (self.n_grams_dict[prev_gram][1] + self.unique_n_grams) )
 
         return result
 
     def PPL(self,sentence):
         # Returns the perplexity of the given sentence
+        # second formula from assignment pdf 
         
-        result = 1
-        return result
+        result = 1/self.Prob(sentence)
+        return result**(1/len(sentence.split(" ")))
+
 

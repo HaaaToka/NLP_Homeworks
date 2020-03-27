@@ -5,8 +5,15 @@ print(list(result))
 
 
 from random import randint
-a= {"lo":[{"hel":4,"ha":5,"ko":1},10]}
-print(randint(1,a["lo"][1]))
+a= {"lo":1,"hel":2,"ha":3,"ko":4}
+a["kel"]=5
+a["gel"]=6
+a["mel"]=7
+a["del"]=8
+a["zel"]=9
+a["fel"]=0
+for k,v in a.items():
+    print(k,":",v)
 
 
 """         line_number=1
