@@ -31,7 +31,7 @@ def dataset(folderPath):
         else:
             sentences.append(line)
 
-        """ if line_number == 50000:
+        """ if line_number == 20000:
             break """
     
     print("DATASET FILE HAS READ")
@@ -44,7 +44,7 @@ def main():
     """ NN_grams = input('''Which grams model you want? 
                         \nUnigram -> 1, Bigram -> 2, Trigram ->3 and so on. 
                         \nGive me your wanted ''') """
-    NN_grams = 2
+    NN_grams = 3
 
     sentences = dataset(path)
 
@@ -52,9 +52,8 @@ def main():
     ngram_language_model.LoadDataset2Model(sentences)
     generated_sentences = ngram_language_model.Generate(20,10)
 
-    print(ngram_language_model.Prob(generated_sentences[-1]))
-    print(ngram_language_model.PPL(generated_sentences[-1]))
-
+    #print(ngram_language_model.Prob(generated_sentences[-1]))
+    #print(ngram_language_model.PPL(generated_sentences[-1]))
 
 
 if __name__ == "__main__":

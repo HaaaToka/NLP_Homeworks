@@ -8,15 +8,15 @@ class LanguageModel:
 
     ngrams=0
 
+    """
+        lets say this our three word respectify"xxx yyy zzz"  {"xxx yyy" : [{ "zzz" : 1}, 1]}
+        mesela <s><s> vericem ben cümle üretirken o tek tek baka baka gidecek
+    """
     n_grams_dict = defaultdict(DefaultdictInside) # vocabulary dictionary
     unique_n_grams = 0
     total_words_count = 0 # for laplace smoothing
 
     all_generated_sentences = []
-    """
-        lets say this our three word respectify"xxx yyy zzz"  {"xxx yyy" : [{ "zzz" : 1}, 1]}
-        mesela <s><s> vericem ben cümle üretirken o tek tek baka baka gidecek
-    """
 
     def __init__(self,n):
         print("You create a new "+str(n)+"gram(s) language modal")
@@ -39,7 +39,6 @@ class LanguageModel:
             else:
                 sanitized_list.append(elem.lower())
 
-        # string->punction bak bi kelimelerde durum nasıl die
         # ngram sentence beginning/ending tags
         return (["<s>"]*(self.ngrams-1))+sanitized_list+(["</s>"]*(self.ngrams-1))
 
@@ -50,7 +49,7 @@ class LanguageModel:
                 self.n_grams_dict[w][1]+=1
 
         else :            
-            for index in range(len(word_list)-self.ngrams):
+            for index in range(len(word_list)-self.ngrams+1):
                 prev_gram = " ".join(word_list[index:self.ngrams+index-1])
                 next_gram = word_list[self.ngrams+index-1]
                 
@@ -90,6 +89,9 @@ class LanguageModel:
 
     def PrintSentence(self,generated_words):
 
+        while generated_words[-1]=="</s>":
+            generated_words.pop()
+
         if self.ngrams == 1:
             self.all_generated_sentences.append(" ".join(generated_words[1:]))
             print(self.all_generated_sentences[-1])
@@ -97,6 +99,9 @@ class LanguageModel:
         else:
             self.all_generated_sentences.append(" ".join(generated_words[self.ngrams-1:]))
             print(self.all_generated_sentences[-1])
+
+        self.PPL(self.all_generated_sentences[-1]) # beginning tokens(<s>) are not included
+        # self.PPL(" ".join(generated_words)) # beginning tokens(<s>) are included
 
     def Generate(self, length, count):
         """
@@ -161,8 +166,17 @@ class LanguageModel:
                 next_gram = split_sentence[self.ngrams+index-1]
 
                 # print(prev_gram,next_gram,"->",self.n_grams_dict[prev_gram][0][next_gram],":",self.n_grams_dict[prev_gram][1], "- - -", self.n_grams_dict[prev_gram][0][next_gram] / self.n_grams_dict[prev_gram][1])
-                result *= ( self.n_grams_dict[prev_gram][0][next_gram] / self.n_grams_dict[prev_gram][1] )
+                
+                if self.n_grams_dict[prev_gram][0][next_gram] == 0:
+                    # There are some sentences that are not stop with ending token. They are interrupted because of wanted length of sentence
+                    # This is caused to zero division error at calculating perplexity
+                    # I am not sure about which one should I use (Prob or Sprob)
+                    # If there wouldn't be any length rule, this condition wouldn't be exist
+                    result *= ( (self.n_grams_dict[prev_gram][0][next_gram]+1) / self.n_grams_dict[prev_gram][1] )
+                else:
+                    result *= ( self.n_grams_dict[prev_gram][0][next_gram] / self.n_grams_dict[prev_gram][1] )
 
+        print("Probabilty of sentence :{0:.20f}".format(result))
         return result
         
 
@@ -187,6 +201,7 @@ class LanguageModel:
                 # print(prev_gram,next_gram,"->",self.n_grams_dict[prev_gram][0][next_gram],":",self.n_grams_dict[prev_gram][1])
                 result *= ( (self.n_grams_dict[prev_gram][0][next_gram] + 1) / (self.n_grams_dict[prev_gram][1] + self.unique_n_grams) )
 
+        print("S-Probabilty of sentence :{0:.20f}".format(result))
         return result
 
     def PPL(self,sentence):
@@ -194,6 +209,9 @@ class LanguageModel:
         # second formula from assignment pdf 
         
         result = 1/self.Prob(sentence)
-        return result**(1/len(sentence.split(" ")))
+        result = result**(1/len(sentence.split(" ")))
+
+        print("Perplexity of sentence :{0:.20f}".format(result))
+        return result
 
 
