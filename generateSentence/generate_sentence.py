@@ -21,7 +21,7 @@ def dataset(folderPath):
                 there is a blank line in each twenty-two lines 
                 Each twente-first line contains XXXXX and aaaa|bbbb|cccc.
                 I delete "aaaa|bbbb|cccc" part.
-                I replace the XXXXX part with the answer that is at the end of the line.
+                I replace the XXXXX part with the answer that is at the end of the sentence.
             """
             sentences[-1] = sentences[-1].split("\t\t")[0]
             answer = sentences[-1].split("\t")[1]
@@ -30,30 +30,25 @@ def dataset(folderPath):
             # print("-->>",answer, ":", sentences[-1])
         else:
             sentences.append(line)
-
-        """ if line_number == 20000:
-            break """
     
     print("DATASET FILE HAS READ")
     return sentences
 
 def main():
 
-    # path = input ("Where is the dataset(assignment1-dataset.txt)? Give me folder path : ")
-    path = "E:\\Universite\\8yy\\497\\NLP_Homeworks\\generateSentence"
-    """ NN_grams = input('''Which grams model you want? 
+    path = input ("Where is the dataset(assignment1-dataset.txt)? Give me folder path : ")
+    # path = "E:\\Universite\\8yy\\497\\NLP_Homeworks\\generateSentence"
+    NN_grams = int(input('''Which grams model you want? 
                         \nUnigram -> 1, Bigram -> 2, Trigram ->3 and so on. 
-                        \nGive me your wanted ''') """
-    NN_grams = 3
+                        \nGive me your wanted '''))
+    # NN_grams = 3
 
     sentences = dataset(path)
 
     ngram_language_model = LanguageModel(NN_grams)
     ngram_language_model.LoadDataset2Model(sentences)
-    generated_sentences = ngram_language_model.Generate(20,10)
+    generated_sentences = ngram_language_model.Generate(100,1)
 
-    #print(ngram_language_model.Prob(generated_sentences[-1]))
-    #print(ngram_language_model.PPL(generated_sentences[-1]))
 
 
 if __name__ == "__main__":

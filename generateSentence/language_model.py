@@ -10,7 +10,6 @@ class LanguageModel:
 
     """
         lets say this our three word respectify"xxx yyy zzz"  {"xxx yyy" : [{ "zzz" : 1}, 1]}
-        mesela <s><s> vericem ben cümle üretirken o tek tek baka baka gidecek
     """
     n_grams_dict = defaultdict(DefaultdictInside) # vocabulary dictionary
     unique_n_grams = 0
@@ -29,12 +28,12 @@ class LanguageModel:
         """
             Sentences are not too long. Thus, creating extra list aren't expensive
         """
-        punctuation_signs = ["``","`","''","'","?","!","|",",",";",":",".","--","'re","'s","n't"]
+        punctuation_signs = ["``","`","''","'","?","!","|",",",";",":",".","--","'re","'s","n't","'ve"]
         sanitized_list = []
 
         for elem in word_list:
             if elem in punctuation_signs:
-                if elem in ["'s","'re","n't"] and len(sanitized_list):
+                if elem in ["'s","'re","n't","'ve"] and len(sanitized_list):
                     sanitized_list[-1]+=elem
             else:
                 sanitized_list.append(elem.lower())
@@ -73,7 +72,7 @@ class LanguageModel:
         for v in self.n_grams_dict.values():
             self.total_words_count += v[1]
 
-        print("\tUnique Word Count ->",self.unique_n_grams)
+        print("\tUnique Gram Count ->",self.unique_n_grams)
         print("\tTotal Word Count ->",self.total_words_count)
         print("DATASET WAS LOADED TO LanguageModel")
 
@@ -176,7 +175,7 @@ class LanguageModel:
                 else:
                     result *= ( self.n_grams_dict[prev_gram][0][next_gram] / self.n_grams_dict[prev_gram][1] )
 
-        print("Probabilty of sentence :{0:.20f}".format(result))
+        print("\t-> Probabilty of sentence :{0:.20f}".format(result))
         return result
         
 
@@ -201,7 +200,7 @@ class LanguageModel:
                 # print(prev_gram,next_gram,"->",self.n_grams_dict[prev_gram][0][next_gram],":",self.n_grams_dict[prev_gram][1])
                 result *= ( (self.n_grams_dict[prev_gram][0][next_gram] + 1) / (self.n_grams_dict[prev_gram][1] + self.unique_n_grams) )
 
-        print("S-Probabilty of sentence :{0:.20f}".format(result))
+        print("\t-> S-Probabilty of sentence :{0:.20f}".format(result))
         return result
 
     def PPL(self,sentence):
@@ -211,7 +210,5 @@ class LanguageModel:
         result = 1/self.Prob(sentence)
         result = result**(1/len(sentence.split(" ")))
 
-        print("Perplexity of sentence :{0:.20f}".format(result))
+        print("\t-> Perplexity of sentence :{0:.20f}".format(result))
         return result
-
-
