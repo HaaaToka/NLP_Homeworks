@@ -86,21 +86,15 @@ class LanguageModel:
             return (self.ngrams-1) * ["<s>"]
 
 
-    def PrintSentence(self,generated_words):
+    def AddSentence2Pool(self,generated_words):
 
-        while generated_words[-1]=="</s>":
+        while generated_words[-1] == "</s>":
             generated_words.pop()
 
         if self.ngrams == 1:
             self.all_generated_sentences.append(" ".join(generated_words[1:]))
-            print(self.all_generated_sentences[-1])
-
         else:
             self.all_generated_sentences.append(" ".join(generated_words[self.ngrams-1:]))
-            print(self.all_generated_sentences[-1])
-
-        self.PPL(self.all_generated_sentences[-1]) # beginning tokens(<s>) are not included
-        # self.PPL(" ".join(generated_words)) # beginning tokens(<s>) are included
 
     def Generate(self, length, count):
         """
@@ -111,7 +105,7 @@ class LanguageModel:
         print("GENERATING OF "+str(self.ngrams)+"GRAM(S) SENTENCE HAS STARTED")
         
         for i in range(count):
-            print(str(i+1)+". Sentence :", end=" ")
+            #print(str(i+1)+". Sentence :", end=" ")
             generated_sentence = self.StartSentence()
             while len(generated_sentence)<(length+self.ngrams-1) and generated_sentence[-1]!="</s>":
                 if self.ngrams == 1:
@@ -119,7 +113,7 @@ class LanguageModel:
                 else:
                     generated_sentence.append(self.Next(generated_sentence[-(self.ngrams-1):]))
             
-            self.PrintSentence(generated_sentence)
+            self.AddSentence2Pool(generated_sentence)
 
         return self.all_generated_sentences
 

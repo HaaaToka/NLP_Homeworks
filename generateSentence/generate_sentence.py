@@ -30,24 +30,38 @@ def dataset(folderPath):
             # print("-->>",answer, ":", sentences[-1])
         else:
             sentences.append(line)
+
+        if line_number == 20000:
+            break
     
     print("DATASET FILE HAS READ")
     return sentences
 
 def main():
 
-    path = input ("Where is the dataset(assignment1-dataset.txt)? Give me folder path : ")
-    # path = "E:\\Universite\\8yy\\497\\NLP_Homeworks\\generateSentence"
-    NN_grams = int(input('''Which grams model you want? 
+    # path = input ("Where is the dataset(assignment1-dataset.txt)? Give me folder path : ")
+    path = "E:\\Universite\\8yy\\497\\NLP_Homeworks\\generateSentence"
+    """ NN_grams = int(input('''Which grams model you want? 
                         \nUnigram -> 1, Bigram -> 2, Trigram ->3 and so on. 
-                        \nGive me your wanted '''))
-    # NN_grams = 3
+                        \nGive me your wanted ''')) """
+
+    # count_of_sentence = int(input("How many sentences you want : "))
+    count_of_sentence = 3
+
+    # maxlength_of_sentence = int(input("How many words does a sentence consist of : "))
+    maxlength_of_sentence = 30
+
+    NN_grams = 3
 
     sentences = dataset(path)
 
     ngram_language_model = LanguageModel(NN_grams)
     ngram_language_model.LoadDataset2Model(sentences)
-    generated_sentences = ngram_language_model.Generate(100,1)
+    generated_sentences = ngram_language_model.Generate(maxlength_of_sentence,count_of_sentence)
+
+    for i in range(count_of_sentence):
+        print(str(i)+".sentence :",generated_sentences[i])
+        ngram_language_model.PPL(generated_sentences[i])
 
 
 
