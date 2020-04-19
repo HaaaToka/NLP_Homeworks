@@ -1,6 +1,5 @@
-a={"Sad":2,"saddsa":123,"dsafdsa":213}
-print(a.__sizeof__)
-
+for i in range(5,1,-1):
+    print(i)
 
 
 
