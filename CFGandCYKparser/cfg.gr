@@ -8,7 +8,7 @@
 ROOT	S .
 ROOT	S !
 ROOT	is it true that S ?     # mixing terminals and nonterminals is ok.
-# ROOT    okan naber S
+# ROOT    okan S !
 
 #    S  = sentence
 #    NP = noun phrase
@@ -19,11 +19,10 @@ ROOT	is it true that S ?     # mixing terminals and nonterminals is ok.
 #    Adj = adjective
 #    Pronoun  = Pronoun 
 
-
 S	NP VP
+NP	Pronoun 
 VP	Verb NP
 NP	Det Noun
-NP	Pronoun 
 NP	NP PP
 PP	Prep NP
 Noun	Adj Noun

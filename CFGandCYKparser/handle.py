@@ -3,8 +3,10 @@ from string import punctuation,ascii_uppercase,ascii_lowercase
 from random import randint
 
 
-def generate_random_nonterminal():
-    pass
+def go_deep(current, magic):
+    while current in magic.keys():
+        current = list(magic[current])[0]
+    return current
 
 def rules(path):
     """
@@ -37,10 +39,38 @@ def rules(path):
                     # it is irregular such as "is it true that S"
                     irregulars.append(line) 
                 else:
-                    print(line)
                     magic[" ".join(line[1:])].add(line[0])
                     cfg_rules[line[0]].add(" ".join(line[1:]))
-                
+
+    irrc=0
+    nonName = "IRREGULAR"
+    for i in range(len(irregulars)):
+        #print(irregulars[i])
+        for j in range(1,len(irregulars[i])):
+            if irregulars[i][j] in punctuation or irregulars[i][j][0] in ascii_lowercase:
+                # print("\t->",irregulars[i][j])
+                if irregulars[i][j] in magic.keys():
+                    irregulars[i][j]=go_deep(list(magic[irregulars[i][j]])[0],magic)
+                else:
+                    while nonName+str(irrc) in cfg_rules.keys():
+                        irrc+=1
+                    cfg_rules[nonName+str(irrc)].add(irregulars[i][j])
+                    magic[irregulars[i][j]].add(nonName+str(irrc))
+                    irregulars[i][j] = nonName+str(irrc)
+
+        while len(irregulars[i])>=3:
+            #print("  ->",irregulars[i])
+            while nonName+str(irrc) in cfg_rules.keys():
+                irrc+=1
+            cfg_rules[nonName+str(irrc)].add(" ".join(irregulars[i][1:3]))
+            magic[" ".join(irregulars[i][1:3])].add(nonName+str(irrc))
+            irregulars[i][1]=nonName+str(irrc)
+            irregulars[i].pop(2)
+        #print("  ->",irregulars[i])
+
+        magic[" ".join(irregulars[i][1:])].add(irregulars[i][0])
+        cfg_rules[irregulars[i][0]].add(" ".join(irregulars[i][1:]))
+
     for k in cfg_rules.keys():
         cfg_rules[k] = list(cfg_rules[k])
 
@@ -57,7 +87,7 @@ def randsentence(cfg_rules,output_file_path):
     coin = randint(0,1)
     if coin:
         print("GENERATING RULE-BASED SENTENCE WAS STARTED")
-        sentence.append("S")
+        sentence.append("ROOT")
         flag=1
         while flag:
             flag=0
@@ -100,20 +130,18 @@ def CYKParser(sentence,rules,triangle,output_file_path):
     
     curX=""
     for stop in range(len(sentence)-1):
-        # print("stop:",stop)
+        #print("stop:",stop)
         for i in range(1,len(sentence)-stop):
             j=i+stop
             curX = "X {0} {1}".format(i,j)
             if i==j:
-                # print("elementary -> "+curX+" ::: "+sentence[i])
+                #print("elementary -> "+curX+" ::: "+sentence[i])
                 # print("\t",triangle[sentence[i]],"- -tpye: ",type(triangle[sentence[i]])," - - str :",str(triangle[sentence[i]]))
                 if sentence[i] not in triangle.keys():
                     triangle[curX].add(sentence[i])
                 else:
-                    temp=list(triangle[sentence[i]])[0]
-                    while temp in triangle.keys():
-                        temp = list(triangle[temp])[0]
-                    triangle[curX].add(temp)
+                    triangle[curX].add(go_deep(list(triangle[sentence[i]])[0],triangle))
+                #print("\t",triangle[curX])
             else:
                 # print("cumulative -> "+curX+" ::: "," ".join(sentence[i:j+1]))
                 mid = i
@@ -138,10 +166,16 @@ def CYKParser(sentence,rules,triangle,output_file_path):
             else:
                 print("XXX",end="\t",file=outF)
         print(file=outF)
-    print("Is Above Sentence Grammatically Correct :", "YES" if triangle[curX]=={"S"} else "NO",file=outF)
+
+    isgrammaticly=0
+    if triangle[curX]:
+        isgrammaticly = triangle[list(triangle[curX])[0]]
+        print("Is Above Sentence Grammatically Correct :", "YES" if triangle[list(triangle[curX])[0]] else "NO",file=outF)
+    else:
+        print("Is Above Sentence Grammatically Correct : NO",file=outF)
     outF.close()
 
-    return 1 if triangle[curX]=={"S"} else 0
+    return isgrammaticly
 
 def main():
     # cfg_file_path = "./cfg.gr"
@@ -152,14 +186,12 @@ def main():
 
     magic_dict,cfg_dict=rules(cfg_file_path)
     cfg_dict=dict(cfg_dict)
-    print(magic_dict)
-    exit()
 
     generated_sentence = randsentence(cfg_dict,sentenceFile)
     print("Generated Sentence => ",generated_sentence)
-
     print("Is Above Sentence Grammatically Correct :", "YES" if CYKParser(generated_sentence,cfg_dict,magic_dict,sentenceFile) else "NO")
-    
+
+    print(">>>>>", "YES" if CYKParser("i want you .",cfg_dict,magic_dict,sentenceFile) else "NO")
 
 if __name__ == "__main__":
     main()

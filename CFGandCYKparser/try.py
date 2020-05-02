@@ -1,4 +1,4 @@
 a=["a","dsf","dfsfa"]
 
-print(a.pop(0))
+print(a.pop(2))
 print(a)
