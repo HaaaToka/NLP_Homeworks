@@ -8,6 +8,7 @@
 ROOT	S .
 ROOT	S !
 ROOT	is it true that S ?     # mixing terminals and nonterminals is ok.
+# ROOT    okan naber S
 
 #    S  = sentence
 #    NP = noun phrase

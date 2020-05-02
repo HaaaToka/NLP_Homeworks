@@ -1,7 +1,10 @@
 from collections import defaultdict
-from string import punctuation,ascii_uppercase
+from string import punctuation,ascii_uppercase,ascii_lowercase
 from random import randint
 
+
+def generate_random_nonterminal():
+    pass
 
 def rules(path):
     """
@@ -11,13 +14,33 @@ def rules(path):
 
     magic = defaultdict(set) # cyk triangular matrix
     cfg_rules = defaultdict(set)
+    irregulars = []
     
     for line in infile.readlines():
-        line = line.strip().split("#")[0].split("\t")
-        if line[0]!='' and line [0]!="ROOT":
-            magic[line[1]].add(line[0])
-            cfg_rules[line[0]].add(line[1])
+        line = line.strip().split("#")[0].split()
 
+        if len(line):
+            if line[-1] in punctuation:
+                irregulars.append(line)
+            else:
+                ismix=0            
+                for elem in line[1:]:
+                    if elem not in punctuation and elem[0] in ascii_lowercase:
+                        ismix+=1
+                        break
+                for elem in line[1:]:
+                    if elem not in punctuation and elem[0] in ascii_uppercase:
+                        ismix-=1
+                        break
+
+                if ismix == 0:
+                    # it is irregular such as "is it true that S"
+                    irregulars.append(line) 
+                else:
+                    print(line)
+                    magic[" ".join(line[1:])].add(line[0])
+                    cfg_rules[line[0]].add(" ".join(line[1:]))
+                
     for k in cfg_rules.keys():
         cfg_rules[k] = list(cfg_rules[k])
 
@@ -128,8 +151,9 @@ def main():
     sentenceFile = "E:\\Universite\\8yy\\497\\NLP_Homeworks\\CFGandCYKparser\\sentence.txt"
 
     magic_dict,cfg_dict=rules(cfg_file_path)
-    # cfg_dict=dict(cfg_dict)
+    cfg_dict=dict(cfg_dict)
     print(magic_dict)
+    exit()
 
     generated_sentence = randsentence(cfg_dict,sentenceFile)
     print("Generated Sentence => ",generated_sentence)

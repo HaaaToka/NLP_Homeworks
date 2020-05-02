@@ -1,0 +1,5 @@
+i want you
+{'NP'}	{'Verb'}	{'NP'}	
+XXX	{'VP'}	
+{'S'}	
+Is Above Sentence Grammatically Correct : YES
