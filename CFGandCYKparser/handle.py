@@ -45,10 +45,10 @@ def rules(path):
     irrc=0
     nonName = "IRREGULAR"
     for i in range(len(irregulars)):
-        #print(irregulars[i])
+        print(irregulars[i])
         for j in range(1,len(irregulars[i])):
             if irregulars[i][j] in punctuation or irregulars[i][j][0] in ascii_lowercase:
-                # print("\t->",irregulars[i][j])
+                print("\t->",irregulars[i][j])
                 if irregulars[i][j] in magic.keys():
                     irregulars[i][j]=go_deep(list(magic[irregulars[i][j]])[0],magic)
                 else:
@@ -59,14 +59,17 @@ def rules(path):
                     irregulars[i][j] = nonName+str(irrc)
 
         while len(irregulars[i])>=3:
-            #print("  ->",irregulars[i])
-            while nonName+str(irrc) in cfg_rules.keys():
-                irrc+=1
-            cfg_rules[nonName+str(irrc)].add(" ".join(irregulars[i][1:3]))
-            magic[" ".join(irregulars[i][1:3])].add(nonName+str(irrc))
-            irregulars[i][1]=nonName+str(irrc)
+            print("  ->"," ".join(irregulars[i]),"\\newline")
+            if " ".join(irregulars[i][1:3]) in magic.keys(): #stupid check
+                irregulars[i][1]=list(magic[" ".join(irregulars[i][1:3])])[0]
+            else:
+                while nonName+str(irrc) in cfg_rules.keys():
+                    irrc+=1
+                cfg_rules[nonName+str(irrc)].add(" ".join(irregulars[i][1:3]))
+                magic[" ".join(irregulars[i][1:3])].add(nonName+str(irrc))
+                irregulars[i][1]=nonName+str(irrc)
             irregulars[i].pop(2)
-        #print("  ->",irregulars[i])
+        print("  ->"," ".join(irregulars[i]),"\\newline")
 
         magic[" ".join(irregulars[i][1:])].add(irregulars[i][0])
         cfg_rules[irregulars[i][0]].add(" ".join(irregulars[i][1:]))

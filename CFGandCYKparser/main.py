@@ -12,6 +12,8 @@ def rules(path):
     magic = defaultdict(set) # cyk triangular matrix
     cfg_rules = defaultdict(set)
     
+    print("!!!!use regex to match valid rules!!!!")
+
     for line in infile.readlines():
         line = line.strip().split("#")[0].split("\t")
         if line[0]!='' and line [0]!="ROOT":
@@ -131,11 +133,11 @@ def main():
     # cfg_dict=dict(cfg_dict)
     print(magic_dict)
 
-    generated_sentence = randsentence(cfg_dict,sentenceFile)
+    """ generated_sentence = randsentence(cfg_dict,sentenceFile)
     print("Generated Sentence => ",generated_sentence)
-
     print("Is Above Sentence Grammatically Correct :", "YES" if CYKParser(generated_sentence,cfg_dict,magic_dict,sentenceFile) else "NO")
-    
-
+     """
+    CYKParser("i want you",cfg_dict,magic_dict,sentenceFile)
+    print("\n\n",magic_dict)
 if __name__ == "__main__":
     main()

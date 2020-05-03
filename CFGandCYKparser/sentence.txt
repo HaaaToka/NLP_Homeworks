@@ -1,17 +1,12 @@
-like you true the a mouse prefer that sandwich ?
-{'Verb'}	{'NP'}	{'IRREGULAR4'}	{'Det'}	{'Det'}	{'Noun'}	{'Verb'}	{'Det'}	{'Noun'}	{'IRREGULAR5'}	
-{'IRREGULAR6', 'VP'}	XXX	XXX	XXX	{'NP'}	XXX	XXX	{'NP'}	XXX	
-{'IRREGULAR7'}	XXX	XXX	XXX	XXX	XXX	{'IRREGULAR6', 'VP'}	XXX	
-{'IRREGULAR8'}	XXX	XXX	XXX	XXX	XXX	XXX	
-XXX	XXX	XXX	XXX	{'S'}	XXX	
-XXX	XXX	XXX	XXX	XXX	
-XXX	XXX	XXX	XXX	
-XXX	XXX	XXX	
-{'IRREGULAR9'}	XXX	
-{'IRREGULAR10'}	
+{'NP'}	{'Verb'}	{'NP'}	
+XXX	{'VP'}	
+{'S'}	
 Is Above Sentence Grammatically Correct : YES
-{'NP', 'Verb'}	{'NP', 'Verb'}	{'NP', 'IRREGULAR4'}	{'IRREGULAR0', 'Det'}	
-{'IRREGULAR6', 'VP'}	{'IRREGULAR6', 'VP'}	XXX	
-{'S', 'IRREGULAR7'}	XXX	
-{'IRREGULAR1', 'IRREGULAR8'}	
+{'NP'}	{'Verb'}	{'NP'}	
+XXX	{'VP'}	
+{'S'}	
+Is Above Sentence Grammatically Correct : YES
+{'NP'}	{'Verb'}	{'NP'}	
+XXX	{'VP'}	
+{'S'}	
 Is Above Sentence Grammatically Correct : YES
