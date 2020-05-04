@@ -20,10 +20,10 @@ ROOT	is it true that S ?     # mixing terminals and nonterminals is ok.
 #    Pronoun  = Pronoun 
 
 S	NP VP
-NP	Pronoun 
 VP	Verb NP
 NP	Det Noun
 NP	NP PP
+NP  Pronoun 
 PP	Prep NP
 Noun	Adj Noun
 

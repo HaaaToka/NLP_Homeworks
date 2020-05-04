@@ -115,8 +115,9 @@ def randsentence(cfg_rules,output_file_path):
         
         while sentence_word_count:
             randRule = kiys[randint(0,lenKi-1)]
-            if cfg_rules[randRule][0][0] not in ascii_uppercase:
-                sentence.append(cfg_rules[randRule][randint(0,len(cfg_rules[randRule])-1)])
+            randWord = cfg_rules[randRule][randint(0,len(cfg_rules[randRule])-1)]
+            if randWord[0] not in ascii_uppercase:
+                sentence.append(randWord)
                 sentence_word_count-=1
 
     outF = open(output_file_path,"w")
@@ -194,7 +195,6 @@ def main():
     print("Generated Sentence => ",generated_sentence)
     print("Is Above Sentence Grammatically Correct :", "YES" if CYKParser(generated_sentence,cfg_dict,magic_dict,sentenceFile) else "NO")
 
-    print(">>>>>", "YES" if CYKParser("i want you .",cfg_dict,magic_dict,sentenceFile) else "NO")
 
 if __name__ == "__main__":
     main()

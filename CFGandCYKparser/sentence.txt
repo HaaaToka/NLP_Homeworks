@@ -1,12 +1,12 @@
-{'NP'}	{'Verb'}	{'NP'}	
-XXX	{'VP'}	
-{'S'}	
-Is Above Sentence Grammatically Correct : YES
-{'NP'}	{'Verb'}	{'NP'}	
-XXX	{'VP'}	
-{'S'}	
-Is Above Sentence Grammatically Correct : YES
-{'NP'}	{'Verb'}	{'NP'}	
-XXX	{'VP'}	
+the president in that mouse under that pickle need it
+{'Det'}	{'Noun'}	{'Prep'}	{'Det'}	{'Noun'}	{'Prep'}	{'Det'}	{'Noun'}	{'Verb'}	{'NP'}	
+{'NP'}	XXX	XXX	{'NP'}	XXX	XXX	{'NP'}	XXX	{'VP'}	
+XXX	XXX	{'PP'}	XXX	XXX	{'PP'}	XXX	XXX	
+XXX	XXX	XXX	XXX	XXX	XXX	{'S'}	
+{'NP'}	XXX	XXX	{'NP'}	XXX	XXX	
+XXX	XXX	{'PP'}	XXX	XXX	
+XXX	XXX	XXX	{'S'}	
+{'NP'}	XXX	XXX	
+XXX	XXX	
 {'S'}	
 Is Above Sentence Grammatically Correct : YES
