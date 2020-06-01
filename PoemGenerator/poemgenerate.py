@@ -1,6 +1,5 @@
 import dynet as dy
 import json
-from glove import Glove
 import numpy as np
 import csv
 from collections import defaultdict
