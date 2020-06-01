@@ -156,32 +156,39 @@ for epoch in range(1, EPOCH + 1):
 
 # I leave you alone with my meaningless, absurd poems
 
-close=20
-satir = 4
-genarated_poem=["bos"]
-generated_poems=[[]]
+close=20#int(unique_gram/100*2)
+satir = 2
+_tempPoem=[]
+generated_poems=[]
+poemCount=20
 
-for i in range(satir):
-    #while 1:
-    while len(genarated_poem)<10:
-        x=sumvec(w2v,genarated_poem[-1])
-        dy.renew_cg()
-        x = dy.inputVector(x)
-        input_layer = dy.tanh(H * x + d)
-        hidden_layer = U * input_layer + b
-        output_layer = list(dy.softmax(hidden_layer).value())
-        oen = list(enumerate(output_layer))
-        oen=sorted(oen,key=itemgetter(1),reverse=True)
-        rnd = random.randint(0,close-1)
-        genarated_poem.append(keys[oen[rnd][0]])
-        #print(genarated_poem)
-        if genarated_poem[-1]=="eol":
-            break
-    generated_poems[-1]+=genarated_poem
-    generated_poem=["eol"]
+for _ in range(poemCount):
+    generated_poems.append([])
+    _tempPoem=["bos"]
+    for i in range(satir):
+        #while 1:
+        while len(_tempPoem)<10:
+            x=sumvec(w2v,_tempPoem[-1])
+            dy.renew_cg()
+            x = dy.inputVector(x)
+            input_layer = dy.tanh(H * x + d)
+            hidden_layer = U * input_layer + b
+            output_layer = list(dy.softmax(hidden_layer).value())
+            oen = list(enumerate(output_layer))
+            oen=sorted(oen,key=itemgetter(1),reverse=True)
+            rnd = random.randint(0,close-1)
+            _tempPoem.append(keys[oen[rnd][0]])
+            #print(_tempPoem)
+            if _tempPoem[-1]=="eol":
+                break
+        generated_poems[-1]+=(_tempPoem)
+        _tempPoem=["eol"]
+        #print()
 
-generated_poems[-1]= " ".join(generated_poems[-1]).replace("bos ","").replace("eol ","\n").replace("eol","").replace("bol ", "")
-print(generated_poems)
+    
+    generated_poems[-1]= " ".join(generated_poems[-1]).replace("bos ","").replace("eos","").replace("eol ","\n").replace("eol","").replace("bol ", "")
+    
+    #print(generated_poems[-1],"\n##############")
 
 
 
@@ -209,15 +216,17 @@ def perplexity(poems,n_grams_dict,unique_word,ngram):
     # Returns the perplexity of the given sentence
     # second formula from assignment pdf 
 
-    result=1
+    
     for p in poems:
+        result=1
+        print(p)
         for pl in p.split("\n"):
             result*=Sprob(pl,n_grams_dict,unique_word,ngram)
         
-    result=1/result
-    result = result**(1/(len(p.split(" "))+satir))
+        result=1/result
+        result = result**(1/(len(p.split(" "))+satir))
 
-    print("-> Perplexity of sentence :{0:.20f}".format(result))
+        print("\t-> Perplexity of poem :{0:.20f}\n########################".format(result))
 
 perplexity(generated_poems,count_dict,unique_gram,ngram)
         
