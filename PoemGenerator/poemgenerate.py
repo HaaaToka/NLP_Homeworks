@@ -230,3 +230,4 @@ def perplexity(poems,n_grams_dict,unique_word,ngram):
 
 perplexity(generated_poems,count_dict,unique_gram,ngram)
         
+# deneme 
