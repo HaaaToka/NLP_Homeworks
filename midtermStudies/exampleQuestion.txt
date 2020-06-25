@@ -1,0 +1,72 @@
+We have learned that dense word vectors learned through word2vec orGloVe have many advantages over using sparse one-hot word vectors.  
+Which of thefollowing is NOT an advantage dense vectors have over sparse vectors?
+
+A.  Models using dense word vectors generalize better to unseen words thanthose using sparse vectors.
+B.  Models  using  dense  word  vectors  generalize  better  to  rare  words  thanthose using sparse vectors.
+C.  Dense word vectors encode similarity between words while sparse vectorsdo not.
+D.  Dense word vectors are easier to include as features in machine learningsystems than sparse vectors.
+
+Solution:A. Just like sparse representations, word2vec or GloVe do not haverepresentations for unseen words and hence do not help in generalization
+
+
+
+------
+
+
+ive 2 examples of how we can evaluate word vectors.  
+For each example,please indicate whether it is intrinsic or extrinsic.
+
+Solution:Intrinsic:  Word Vector Analogies ; Word vector distances and theircorrelation with human judgments.
+Extrinsic:  Name entity recognitions:  finding a person, location or organizationand so on.
+
+
+--------------
+
+Although  pre-trained  word  vectors  work  very  well  in  many  practicaldownstream  tasks,  in  some  settings  it’s  best  to  continue  to  learn  
+(i.e.   ‘retrain’)the word vectors as parameters of our neural network.  Explain why retraining theword vectors may hurt our model if our dataset for the specific task is too small.
+
+Solution: Word  vectors  intraining data move around; word vectors not in training data don’t move around.Destroys structure of word vector space.  
+Could also phrase as an overfitting orgeneralization problem
+
+
+------------
+
+
+we saw how word vectors can alternatively be learned via co-occurrence count-based methods.  
+How does Word2Vec compare with these meth-ods?  
+
+Solution:Advantage of word2vec: scale with corpus size; capture complex patterns beyondword similarity
+Disadvantage:   slower  than  occurrence  count  based  model;  efficient  usage  ofstatistics
+
+
+----------
+
+ ---- https://web.stanford.edu/class/archive/cs/cs224n/cs224n.1184/midterm/cs224n-midterm-2018-solution.pdf
+backpropagation RELU :: CNN
+RNN - Name Entity Recognition
+RNN - Sentiment  Analysis
+RNN - Language models/chatbot
+LSTM - Gradient
+
+---------
+
+You  observe  that  your  model  predicts  very  positive  sentiment  forthe following passage:
+"""Yesterday turned out to be a terrible day.
+I overslept my alarm clock, and to make matters worse,my dog ate my homework. 
+At least my dog seems happy..."""
+Why might the model misclassify the appropriate sentiment for this sentence?
+
+Solution:The final word in the sentence is ’happy’ which has very positivesentiment.  
+Since we only use the final hidden state to compute the output,the final word would have too much impact in the classification. 
+In addition,because the sentence is quite long, information from earlier time steps maynot survive due to the vanishing gradient problem.
+
+
+-----------
+
+Clipping the gradient (cutting off at a threshold) will solve theexploding gradients problem.
+Solution: True.  Self-explanatory if the threshold choice is good.  Points were awarded based onthe clarity of the answer.
+Extra info->Gradient clipping is only a solution for solving exploding gradientproblems, not vanishing gradient ones
+
+
+
+-------------
